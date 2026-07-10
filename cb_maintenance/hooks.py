@@ -7,8 +7,6 @@ app_license = "MIT"
 
 required_apps = []
 
-app_include_css = ["/assets/cb_maintenance/css/maintenance_ops.css"]
-
 
 after_install = "cb_maintenance.install.after_install"
 
