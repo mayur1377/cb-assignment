@@ -1,136 +1,71 @@
-# cb_maintenance — California Burrito Maintenance Ops
+# cb_maintenance
 
-Frappe custom app replacing spreadsheet-based maintenance tracking for California Burrito's 133 stores across 5 Indian cities.
-
----
-
-## Live Demo
-
-| | |
-|---|---|
-| **URL** | *(add after Frappe Cloud deploy)* |
-| **Email** | maintenance@californiaburrito.in |
-| **Password** | Admin@CB2024 |
-| **Role** | Maintenance Manager |
-
-> Log in → open the **Maintenance Ops** workspace from the top-left app switcher.
+**Live site:** *(add URL after deploy)*
+**Login:** `maintenance@californiaburrito.in` / `Admin@CB2024` — role: Maintenance Manager
 
 ---
 
-## What's built
+## What I built
 
-### Core v1
-| Requirement | Implementation |
-|---|---|
-| Define PM once, roll everywhere | `CB PM Program` — one program per asset type, **Roll Out to Stores** button creates tasks across all 133 outlets |
-| See due / overdue, mark done | `CB PM Task` with Scheduled → Due → Overdue → Completed / Failed lifecycle; daily scheduler auto-refreshes |
-| Raise a reactive ticket | `CB Maintenance Ticket` — outlet + asset + issue type, auto-assigned to zonal incharge |
-| Handle messy data | Asset name normalisation (`ASSET_ALIASES`), blank-frequency → one-time, outlet/asset pairs inferred from PM tracker |
+All four v1 requirements plus the full "go further" set:
 
-### Go further
-| Feature | How |
-|---|---|
-| Shared equipment taxonomy | Both PM tasks and tickets use `CB Asset Type` + `CB Issue Type` — same hierarchy, two workflows |
-| Zonal routing | Outlet → city → `CB Zonal Office` → `CB Maintenance Team Member` (incharge flag). Auto-assigned on every ticket and PM failure |
-| Spare parts suggestion | When `issue_type` is selected on a ticket, JS looks up `CB Spare Part` records and prefills the field. PM-failure tickets do the same server-side |
-| PM failure → ticket | Mark a PM task result as **Failed** → `on_update` auto-creates a linked `CB Maintenance Ticket` with issue type, spare part, and assignee already filled |
-| Overdue alerts | Two layers: (1) Python scheduler emails zonal incharge on first day of overdue; (2) declarative `Notification` fixture fires 1 day after due date for all Maintenance Managers |
-
-### Reports
-| Report | What it shows |
-|---|---|
-| **PM Health by Outlet** | Per-outlet: total tasks, completed, overdue, open tickets, completion %, health status (🟢/🟡/🔴). Bar chart + summary row |
-| **Asset Failure Analysis** | Per-asset type: PM failure rate, reactive ticket count, top issue category, most-needed spare part. Connects all 4 source files |
-
----
-
-## Data model
-
-```
-CB Zonal Office  ←─  CB Outlet  ─→  CB Store Asset  ←─  CB PM Task
-                                          │                    │
-                                     CB Asset Type        CB PM Program
-                                                               │
-CB Maintenance Ticket  ─→  CB Issue Type  ─→  CB Spare Part   │
-        │                                                      │
-        └─────────────────── linked_ticket ───────────────────┘
-```
-
-| DocType | Purpose |
-|---|---|
-| CB Zonal Office | 5 city offices (BLR / NCR / HYD / CHN / PUN) |
-| CB Outlet | 133 stores |
-| CB Asset Type | Normalised equipment taxonomy (~18 types) |
-| CB PM Program | PM template per asset type — tasks + frequencies |
-| CB Store Asset | Asset instance at a specific outlet |
-| CB PM Task | Scheduled work — auto-created, auto-recurs |
-| CB Issue Type | Ticket taxonomy: Dept → Category → Sub-category |
-| CB Spare Part | Coded parts catalog linked to issue types |
-| CB Maintenance Team Member | Technicians with reporting chain + incharge flag |
-| CB Maintenance Ticket | Reactive + PM-failure tickets |
-
----
-
-## Walkthrough Q&A
-
-**A new store opens — what do you create?**
-1. Create `CB Outlet` (code + city). City auto-links to the right `CB Zonal Office`.
-2. Create one `CB Store Asset` per piece of equipment.
-3. Done — `after_insert` scans active PM programs for that asset type and creates all `CB PM Task` rows automatically.
-
-**AC coil cleaning → bi-monthly chain-wide — what do you touch?**
-Open the `AC Plant PM Program`, change the task frequency to `6 month`. Click **Roll Out to Stores**. The rollout skips stores that already have an open task for that task name. Going forward, `generate_recurring_pm_tasks` (daily scheduler) uses the new frequency after each completion.
-
-**How many records after 1 year / 5 years?**
-
-| Table | 1 year | 5 years | Notes |
-|---|---|---|---|
-| CB PM Program | ~18 | ~18 | Templates never grow |
-| CB Store Asset | ~1,300 | ~1,400 | ~10 assets × 133 stores |
-| CB PM Task | ~25,000 | ~125,000 | Assets × tasks × recurrences |
-| CB Maintenance Ticket | ~2,000–5,000 | ~10,000–25,000 | Depends on failure rate |
-
-All list views filter by indexed fields (`status`, `outlet`, `due_date`) — stays fast at 100k+ rows. The **PM Health by Outlet** report aggregates this in one query.
-
-**How would you route a ticket to the right technician?**
-`CB Outlet.city` → hardcoded city-to-office map → query `CB Maintenance Team Member` where `zonal_office = X AND is_incharge = 1` → fall back to first active member. Runs in `CBMaintenanceTicket.validate()` so every ticket arrives pre-assigned.
-
----
-
-## Run locally (Docker)
-
-```bash
-# macOS — start Colima if using it instead of Docker Desktop
-colima start
-export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
-
-cd cb_maintenance
-docker-compose up --build
-```
-
-First run takes ~10 min (downloads Frappe, creates site). Visit **http://localhost:8000** — login `Administrator` / `admin`.
-
-Then import seed data:
-
-```bash
-docker compose exec frappe bench --site site1.local \
-  execute cb_maintenance.maintenance_ops.setup.import_case_data.run
-```
-
----
-
-## Deploy to Frappe Cloud
-
-1. [frappecloud.com](https://frappecloud.com) → free trial → **New Site** → Frappe v15
-2. Add app → GitHub → `mayur1377/cb-assignment` → branch `main`
-3. After site is up, open Console and run the import command above (replace `site1.local` with your site name)
-4. Create a user → assign role **Maintenance Manager** → share credentials
+- **PM program → store rollout** — one program per asset type, one click fans out tasks to all active store assets. New store assets auto-generate tasks on insert.
+- **PM task lifecycle** — Scheduled → Due → Overdue → Completed / Failed, refreshed by daily scheduler. Recurring tasks auto-created after completion.
+- **PM failure → ticket** — marking a task Failed auto-creates a linked `CB Maintenance Ticket` with issue type, spare part, and assignee pre-filled.
+- **Zonal routing** — outlet → city → zonal office → incharge. Runs on every ticket (reactive or failure-generated).
+- **Spare parts suggestion** — selecting an issue type on a ticket prefills the spare part field client-side; PM failure path does the same server-side.
+- **Overdue alerts** — two layers: Python scheduler emails zonal incharge on the first overdue day; `Notification` fixture fires for Maintenance Managers declaratively.
+- **Two reports** — *PM Health by Outlet* (completion rate, overdue count, at-risk flag per outlet) and *Asset Failure Analysis* (failure rate + top issue + most-needed spare part per asset type). Both have summary rows and bar charts.
+- **CB brand theme** — CSS variables override Frappe's primary colour; staggered fade-up animations on workspace cards; pulsing red badge on overdue items.
+- **Print format** — `CB PM Task Checklist` renders a field-ready PDF with inspection checklist, observations box, pass/fail, and signature lines.
 
 ---
 
 ## Design decisions
 
-- **Asset normalisation** — messy names (`"Fire Ext."`, `"Walk-IN Chiller"`) map to canonical `CB Asset Type` records via `ASSET_ALIASES` dict; aliases stored for traceability.
-- **Frequency gaps** — blank frequency in the legacy sheet → `One-time`; excluded from auto-recurrence.
-- **Store assets inferred** — only outlet + asset pairs that appear in the PM tracker are created; not every outlet is assumed to have every asset type.
-- **Scope cut** — no ERPNext Asset module, no mobile app, no WhatsApp integration. Daily scheduler is the overdue notification hook; email notifications handle escalation.
+**Asset normalisation** — the PM tracker has 15+ spellings for the same equipment (`"Fire Ext."`, `"Walk-IN Chiller"`, `"A/C Plant"`). I normalised these to ~18 canonical `CB Asset Type` records via an `ASSET_ALIASES` dict in the import script rather than creating duplicate asset types.
+
+**Store assets inferred, not assumed** — only outlet + asset pairs that actually appear in the PM tracker get a `CB Store Asset` record. Assuming every outlet has every asset type would create thousands of phantom tasks.
+
+**Blank frequency → one-time** — rows with no frequency in the legacy sheet are imported as `One-time` and excluded from auto-recurrence. Treating them as monthly (the most common frequency) would silently schedule unwanted work.
+
+**Notification fixture + Python scheduler** — the `Notification` doctype fixture handles the declarative case (role-based, zero code). The Python scheduler adds precise zonal routing that the declarative model can't express. Both coexist.
+
+**Scope cut** — no ERPNext Asset module integration, no mobile interface, no WhatsApp. The daily scheduler is the overdue escalation hook; the reporting layer covers visibility.
+
+---
+
+## Walkthrough
+
+**New store opens?**
+Create `CB Outlet` (code + city) → create `CB Store Asset` rows. The `after_insert` hook scans active PM programs for that asset type and creates all PM tasks automatically.
+
+**AC coil cleaning → bi-monthly chain-wide?**
+Edit the frequency on the `AC Plant PM Program` task row → **Roll Out to Stores**. Stores with an open task for that task name are skipped. Future recurrence follows the new frequency after completion.
+
+**Records after 1 year / 5 years?**
+
+| Table | 1 yr | 5 yr |
+|---|---|---|
+| CB PM Program | ~18 | ~18 |
+| CB Store Asset | ~1,300 | ~1,400 |
+| CB PM Task | ~25,000 | ~125,000 |
+| CB Maintenance Ticket | ~2,000–5,000 | ~10,000–25,000 |
+
+List views filter on indexed fields (`status`, `outlet`, `due_date`). The PM Health report aggregates everything in a single query.
+
+**Route a ticket to the right technician?**
+`outlet.city` → city-to-office map → `CB Maintenance Team Member` where `zonal_office = X AND is_incharge = 1` → fall back to first active member. Runs in `validate()` so every ticket arrives pre-assigned.
+
+---
+
+## Run locally
+
+```bash
+colima start && export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
+docker-compose up --build
+# then in a second terminal:
+docker compose exec frappe bench --site site1.local execute cb_maintenance.maintenance_ops.setup.import_case_data.run
+```
+
+Site at `http://localhost:8000` — `Administrator` / `admin`.
