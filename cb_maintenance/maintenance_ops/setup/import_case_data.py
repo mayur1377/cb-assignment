@@ -44,8 +44,9 @@ FREQ_MAP = {
 }
 
 
+@frappe.whitelist()
 def run(data_dir: str | None = None):
-	"""Entry point for bench execute."""
+	"""Entry point for bench execute and whitelisted API call."""
 	import pandas as pd
 
 	base = Path(data_dir) if data_dir else _find_data_dir()
