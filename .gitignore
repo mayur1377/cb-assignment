@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.venv/
+env/
+
+# Frappe bench environments (local dev only — not part of the app)
+cb-bench/
+bench/
+bench.bak*/
+
+# Logs
+*.log
+logs/

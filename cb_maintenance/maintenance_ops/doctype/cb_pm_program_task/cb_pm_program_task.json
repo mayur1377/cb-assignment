@@ -1,0 +1,53 @@
+{
+ "actions": [],
+ "creation": "2026-07-07 21:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "task",
+  "frequency",
+  "default_issue_type",
+  "notes"
+ ],
+ "fields": [
+  {
+   "fieldname": "task",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Task",
+   "reqd": 1
+  },
+  {
+   "fieldname": "frequency",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Frequency",
+   "options": "\nWeekly\nMonthly\nQtrly\n6 month\nYearly\nOne-time"
+  },
+  {
+   "description": "Suggested ticket category if this inspection fails",
+   "fieldname": "default_issue_type",
+   "fieldtype": "Link",
+   "label": "Default Issue Type",
+   "options": "CB Issue Type"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-07-07 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Maintenance Ops",
+ "name": "CB PM Program Task",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

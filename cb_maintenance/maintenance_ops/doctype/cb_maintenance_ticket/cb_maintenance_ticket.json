@@ -1,0 +1,182 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-07-07 21:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "subject",
+  "outlet",
+  "store_asset",
+  "issue_type",
+  "spare_part",
+  "status",
+  "priority",
+  "source",
+  "column_break_assignment",
+  "assigned_to",
+  "zonal_office",
+  "section_break_details",
+  "description",
+  "pm_task"
+ ],
+ "fields": [
+  {
+   "default": "TKT-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "TKT-.YYYY.-.#####",
+   "reqd": 1
+  },
+  {
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Subject",
+   "reqd": 1
+  },
+  {
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Outlet",
+   "options": "CB Outlet",
+   "reqd": 1
+  },
+  {
+   "fieldname": "store_asset",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Store Asset",
+   "options": "CB Store Asset"
+  },
+  {
+   "fieldname": "issue_type",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Issue Type",
+   "options": "CB Issue Type"
+  },
+  {
+   "fieldname": "spare_part",
+   "fieldtype": "Link",
+   "label": "Suggested Spare Part",
+   "options": "CB Spare Part"
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Open\nIn Progress\nResolved\nClosed",
+   "reqd": 1
+  },
+  {
+   "default": "Medium",
+   "fieldname": "priority",
+   "fieldtype": "Select",
+   "label": "Priority",
+   "options": "Low\nMedium\nHigh\nUrgent"
+  },
+  {
+   "default": "Reactive",
+   "fieldname": "source",
+   "fieldtype": "Select",
+   "label": "Source",
+   "options": "Reactive\nPM Failure"
+  },
+  {
+   "fieldname": "column_break_assignment",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "assigned_to",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Assigned To",
+   "options": "CB Maintenance Team Member"
+  },
+  {
+   "fetch_from": "outlet.zonal_office",
+   "fieldname": "zonal_office",
+   "fieldtype": "Link",
+   "label": "Zonal Office",
+   "options": "CB Zonal Office",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_break_details",
+   "fieldtype": "Section Break",
+   "label": "Details"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text Editor",
+   "label": "Description"
+  },
+  {
+   "fieldname": "pm_task",
+   "fieldtype": "Link",
+   "label": "PM Task",
+   "options": "CB PM Task",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-07-07 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Maintenance Ops",
+ "name": "CB Maintenance Ticket",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Maintenance Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Maintenance User",
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [
+  {"color": "Orange", "title": "Open"},
+  {"color": "Blue",   "title": "In Progress"},
+  {"color": "Green",  "title": "Resolved"},
+  {"color": "Gray",   "title": "Closed"}
+ ],
+ "track_changes": 1
+}

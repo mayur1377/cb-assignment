@@ -1,0 +1,189 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "naming_series:",
+ "creation": "2026-07-07 21:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "store_asset",
+  "outlet",
+  "asset_type",
+  "task",
+  "frequency",
+  "due_date",
+  "status",
+  "column_break_completion",
+  "result",
+  "completed_on",
+  "completed_by",
+  "notes",
+  "section_break_links",
+  "pm_program_task",
+  "linked_ticket"
+ ],
+ "fields": [
+  {
+   "default": "PM-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Series",
+   "options": "PM-.YYYY.-.#####",
+   "reqd": 1
+  },
+  {
+   "fieldname": "store_asset",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Store Asset",
+   "options": "CB Store Asset",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "store_asset.outlet",
+   "fieldname": "outlet",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Outlet",
+   "options": "CB Outlet",
+   "read_only": 1
+  },
+  {
+   "fetch_from": "store_asset.asset_type",
+   "fieldname": "asset_type",
+   "fieldtype": "Link",
+   "label": "Asset Type",
+   "options": "CB Asset Type",
+   "read_only": 1
+  },
+  {
+   "fieldname": "task",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Task",
+   "reqd": 1
+  },
+  {
+   "fieldname": "frequency",
+   "fieldtype": "Select",
+   "label": "Frequency",
+   "options": "\nWeekly\nMonthly\nQtrly\n6 month\nYearly\nOne-time"
+  },
+  {
+   "fieldname": "due_date",
+   "fieldtype": "Date",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Due Date",
+   "reqd": 1
+  },
+  {
+   "default": "Scheduled",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Scheduled\nDue\nOverdue\nCompleted\nFailed",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_completion",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "result",
+   "fieldtype": "Select",
+   "label": "Result",
+   "options": "\nPassed\nFailed"
+  },
+  {
+   "fieldname": "completed_on",
+   "fieldtype": "Date",
+   "label": "Completed On"
+  },
+  {
+   "fieldname": "completed_by",
+   "fieldtype": "Link",
+   "label": "Completed By",
+   "options": "CB Maintenance Team Member"
+  },
+  {
+   "fieldname": "notes",
+   "fieldtype": "Small Text",
+   "label": "Notes"
+  },
+  {
+   "fieldname": "section_break_links",
+   "fieldtype": "Section Break",
+   "label": "Links"
+  },
+  {
+   "fieldname": "pm_program_task",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "PM Program Task Row"
+  },
+  {
+   "fieldname": "linked_ticket",
+   "fieldtype": "Link",
+   "label": "Linked Ticket",
+   "options": "CB Maintenance Ticket",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-07-07 21:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Maintenance Ops",
+ "name": "CB PM Task",
+ "naming_rule": "By \"Naming Series\" field",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Maintenance Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Maintenance User",
+   "write": 1
+  }
+ ],
+ "sort_field": "due_date",
+ "sort_order": "ASC",
+ "states": [
+  {"color": "Blue",   "title": "Scheduled"},
+  {"color": "Orange", "title": "Due"},
+  {"color": "Red",    "title": "Overdue"},
+  {"color": "Green",  "title": "Completed"},
+  {"color": "Red",    "title": "Failed"}
+ ],
+ "track_changes": 1
+}

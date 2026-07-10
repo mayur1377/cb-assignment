@@ -1,0 +1,58 @@
+services:
+  mariadb:
+    image: mariadb:10.11
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: erpnext
+      MYSQL_USER: frappe
+      MYSQL_PASSWORD: frappe
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  redis-cache:
+    image: redis:7.2
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6379:6379"
+
+  redis-queue:
+    image: redis:7.2
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6380:6379"
+
+  redis-socketio:
+    image: redis:7.2
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6381:6379"
+
+  frappe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - mariadb
+      - redis-cache
+      - redis-queue
+      - redis-socketio
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+    volumes:
+      - .:/workspace:cached
+      - frappe_bench:/home/frappe/frappe-bench
+    environment:
+      ADMIN_PASSWORD: admin
+      DB_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+      DB_HOST: mariadb
+      REDIS_CACHE: redis://redis-cache:6379
+      REDIS_QUEUE: redis://redis-queue:6379
+      REDIS_SOCKETIO: redis://redis-socketio:6379
+
+volumes:
+  mariadb_data:
+  frappe_bench:

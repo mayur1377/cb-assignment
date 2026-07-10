@@ -1,0 +1,21 @@
+[
+  {
+    "doctype": "Notification",
+    "name": "CB PM Task Overdue Alert",
+    "enabled": 1,
+    "channel": "Email",
+    "subject": "[⚠️ Overdue] PM Task: {{ doc.task }} — Outlet {{ doc.outlet }}",
+    "document_type": "CB PM Task",
+    "event": "Days After",
+    "days_in_advance": 1,
+    "date_changed": "due_date",
+    "condition": "doc.status not in ('Completed', 'Failed') and not doc.result",
+    "send_to_all_assignees": 0,
+    "recipients": [
+      {
+        "receiver_by_role": "Maintenance Manager"
+      }
+    ],
+    "message": "<div style=\"font-family: Arial, sans-serif; max-width: 600px;\">\n\n  <div style=\"background: #C8102E; color: white; padding: 16px 20px; border-radius: 6px 6px 0 0;\">\n    <strong style=\"font-size: 18px;\">&#9888; Overdue PM Task</strong><br>\n    <span style=\"font-size: 13px; opacity: 0.9;\">California Burrito Maintenance Ops</span>\n  </div>\n  <div style=\"height: 4px; background: #F7B731;\"></div>\n\n  <div style=\"padding: 20px; background: #fff; border: 1px solid #e0e0e0; border-top: none; border-radius: 0 0 6px 6px;\">\n    <p>The following preventive maintenance task is <strong style=\"color: #C8102E;\">overdue</strong> and requires immediate attention.</p>\n\n    <table style=\"width: 100%; border-collapse: collapse; margin: 16px 0;\">\n      <tr>\n        <th style=\"text-align:left; padding: 8px 12px; background: #f5f5f5; border: 1px solid #ddd; width: 160px;\">Task ID</th>\n        <td style=\"padding: 8px 12px; border: 1px solid #ddd;\"><strong>{{ doc.name }}</strong></td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left; padding: 8px 12px; background: #f5f5f5; border: 1px solid #ddd;\">Task</th>\n        <td style=\"padding: 8px 12px; border: 1px solid #ddd;\">{{ doc.task }}</td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left; padding: 8px 12px; background: #f5f5f5; border: 1px solid #ddd;\">Asset Type</th>\n        <td style=\"padding: 8px 12px; border: 1px solid #ddd;\">{{ doc.asset_type }}</td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left; padding: 8px 12px; background: #f5f5f5; border: 1px solid #ddd;\">Outlet</th>\n        <td style=\"padding: 8px 12px; border: 1px solid #ddd;\">{{ doc.outlet }}</td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left; padding: 8px 12px; background: #f5f5f5; border: 1px solid #ddd;\">Due Date</th>\n        <td style=\"padding: 8px 12px; border: 1px solid #ddd; color: #C8102E;\"><strong>{{ doc.due_date }}</strong></td>\n      </tr>\n      <tr>\n        <th style=\"text-align:left; padding: 8px 12px; background: #f5f5f5; border: 1px solid #ddd;\">Frequency</th>\n        <td style=\"padding: 8px 12px; border: 1px solid #ddd;\">{{ doc.frequency or 'One-time' }}</td>\n      </tr>\n    </table>\n\n    <p style=\"margin-top: 20px;\">\n      Please complete this task or raise a reactive ticket as soon as possible.\n    </p>\n\n    <div style=\"margin-top: 24px; padding-top: 16px; border-top: 1px solid #eee; font-size: 12px; color: #888;\">\n      California Burrito Maintenance Ops &nbsp;&bull;&nbsp; Automated alert — do not reply\n    </div>\n  </div>\n\n</div>"
+  }
+]

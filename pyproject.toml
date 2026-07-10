@@ -1,0 +1,20 @@
+[project]
+name = "cb_maintenance"
+authors = [
+    { name = "California Burrito", email = "sanju.vp@californiaburrito.in" }
+]
+description = "Preventive and reactive maintenance operations for California Burrito stores"
+requires-python = ">=3.10"
+readme = "README.md"
+dynamic = ["version"]
+dependencies = [
+    "openpyxl>=3.1.0",
+    "pandas>=2.0.0",
+]
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.bench.dev-dependencies]
+cb_maintenance = []
