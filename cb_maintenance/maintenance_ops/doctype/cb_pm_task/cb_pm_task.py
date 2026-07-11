@@ -11,7 +11,7 @@ class CBPMTask(Document):
 			self.status = "Completed"
 			if not self.completed_on:
 				self.completed_on = today()
-		else:
+		elif self.is_new():
 			self.set_status_from_due_date()
 
 	def on_update(self):
@@ -112,5 +112,3 @@ def before_save(doc, method=None):
 		doc.status = "Failed"
 	elif doc.result == "Passed":
 		doc.status = "Completed"
-	else:
-		doc.set_status_from_due_date()
