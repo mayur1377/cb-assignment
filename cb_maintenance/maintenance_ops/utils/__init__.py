@@ -6,6 +6,7 @@ CITY_ZONAL_OFFICE = {
 	"HYD": "Zonal Office - Hyderabad",
 	"CHN": "Zonal Office - Chennai",
 	"PUN": "Zonal Office - Pune",
+	"MUM": "Zonal Office - Mumbai",
 }
 
 FREQUENCY_DAYS = {

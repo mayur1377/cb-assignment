@@ -146,6 +146,34 @@ def _has_open_task(store_asset: str, task: str) -> bool:
 	)
 
 
+def _get_zonal_incharge(store_asset: str) -> str | None:
+	"""Return the employee_no of the incharge for the store asset's zonal office."""
+	zonal_office = frappe.db.get_value("CB Store Asset", store_asset, "zonal_office")
+	if not zonal_office:
+		outlet = frappe.db.get_value("CB Store Asset", store_asset, "outlet")
+		city = frappe.db.get_value("CB Outlet", outlet, "city") if outlet else None
+		if city:
+			from cb_maintenance.maintenance_ops.utils import get_zonal_office_for_city
+			zonal_office = get_zonal_office_for_city(city)
+	if not zonal_office:
+		return None
+	incharge = frappe.get_all(
+		"CB Maintenance Team Member",
+		filters={"zonal_office": zonal_office, "is_incharge": 1, "is_active": 1},
+		pluck="name",
+		limit=1,
+	)
+	if incharge:
+		return incharge[0]
+	any_member = frappe.get_all(
+		"CB Maintenance Team Member",
+		filters={"zonal_office": zonal_office, "is_active": 1},
+		pluck="name",
+		limit=1,
+	)
+	return any_member[0] if any_member else None
+
+
 def _create_pm_task(store_asset, task, frequency, due_date, pm_program_task=None):
 	doc = frappe.get_doc(
 		{
@@ -155,6 +183,7 @@ def _create_pm_task(store_asset, task, frequency, due_date, pm_program_task=None
 			"frequency": frequency,
 			"due_date": getdate(due_date),
 			"pm_program_task": pm_program_task,
+			"assigned_to": _get_zonal_incharge(store_asset),
 		}
 	)
 	doc.insert(ignore_permissions=True)
