@@ -106,16 +106,16 @@ def _get_data(filters):
             sa.outlet,
             o.city,
             o.zonal_office,
-            COUNT(*)                                          AS total,
-            SUM(t.status = 'Completed')                      AS completed,
-            SUM(t.status = 'Due')                            AS due,
-            SUM(t.status = 'Overdue')                        AS overdue,
-            SUM(t.status = 'Failed')                         AS failed
+            COUNT(*)                                                    AS total,
+            SUM(CASE WHEN t.status = 'Completed' THEN 1 ELSE 0 END)    AS completed,
+            SUM(CASE WHEN t.status = 'Due'       THEN 1 ELSE 0 END)    AS due,
+            SUM(CASE WHEN t.status = 'Overdue'   THEN 1 ELSE 0 END)    AS overdue,
+            SUM(CASE WHEN t.status = 'Failed'    THEN 1 ELSE 0 END)    AS failed
         FROM `tabCB PM Task` t
         JOIN `tabCB Store Asset` sa ON sa.name = t.store_asset
         JOIN `tabCB Outlet`      o  ON o.name  = sa.outlet
         WHERE 1=1 {conditions}
-        GROUP BY sa.outlet
+        GROUP BY sa.outlet, o.city, o.zonal_office
         ORDER BY overdue DESC, o.city
         """,
         filters,

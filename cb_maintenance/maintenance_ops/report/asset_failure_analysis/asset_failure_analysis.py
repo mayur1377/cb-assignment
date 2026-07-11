@@ -93,9 +93,9 @@ def _get_data(filters):
         """
         SELECT
             sa.asset_type,
-            COUNT(*)                   AS total_tasks,
-            SUM(t.status = 'Failed')   AS failures,
-            COUNT(DISTINCT sa.outlet)  AS stores_affected
+            COUNT(*)                                                 AS total_tasks,
+            SUM(CASE WHEN t.status = 'Failed' THEN 1 ELSE 0 END)   AS failures,
+            COUNT(DISTINCT sa.outlet)                                AS stores_affected
         FROM `tabCB PM Task`    t
         JOIN `tabCB Store Asset` sa ON sa.name = t.store_asset
         GROUP BY sa.asset_type
